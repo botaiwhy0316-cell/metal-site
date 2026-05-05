@@ -1,0 +1,15 @@
+name: Auto Update Metal Price
+
+on:
+  schedule:
+    - cron: "20 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Visit website to trigger update
+        run: |
+          curl -L "https://web-production-9969b.up.railway.app"
