@@ -86,45 +86,12 @@
             line-height: 1.8;
         }
 
-        .news, .analysis, .chart-box, .products {
+        .products {
             background: white;
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .news a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-
-        .news li {
-            margin-bottom: 10px;
-        }
-
-        .analysis-content {
-            white-space: pre-line;
-            line-height: 1.8;
-            color: #334155;
-        }
-
-        .buttons {
-            margin-bottom: 15px;
-        }
-
-        .buttons button {
-            padding: 8px 18px;
-            margin-right: 8px;
-            border: none;
-            border-radius: 6px;
-            background: #1d4ed8;
-            color: white;
-            cursor: pointer;
-        }
-
-        .buttons button:hover {
-            background: #1e40af;
         }
 
         .product-grid {
@@ -137,18 +104,55 @@
             width: 260px;
         }
 
+        /* 🔥 核心：悬浮放大 */
         .product img {
             width: 100%;
             height: 180px;
             object-fit: cover;
             border-radius: 10px;
             border: 1px solid #e5e7eb;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product img:hover {
+            transform: scale(1.08);
         }
 
         .product-title {
             margin-top: 10px;
             font-weight: bold;
             text-align: center;
+        }
+
+        /* 🔥 点击弹窗 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal img {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .image-modal span {
+            position: absolute;
+            top: 30px;
+            right: 45px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
         }
 
         .footer {
@@ -173,180 +177,50 @@
 
 <div class="container">
 
-    <div class="notice">
-        提醒：当前可能是周末或中国节假日，当前显示的是最近交易日行情。
-    </div>
-
-    <div class="info">
-        <p>数据来源：长江有色网</p>
-        <p>行情日期：{{ prices.market_date }}</p>
-        <p>今日日期：{{ today_date }}</p>
-    </div>
-
-    <div class="cards">
-
-        <div class="card">
-            <h2>铜价</h2>
-            <div class="price" style="color:{% if prices.copper.trend == 'up' %}red{% elif prices.copper.trend == 'down' %}green{% else %}black{% endif %};">
-                今日均价：{{ prices.copper.today }}<br>
-                上日均价：{{ prices.copper.yesterday }}<br>
-                涨跌：{{ prices.copper.change }}
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>铝价</h2>
-            <div class="price" style="color:{% if prices.aluminum.trend == 'up' %}red{% elif prices.aluminum.trend == 'down' %}green{% else %}black{% endif %};">
-                今日均价：{{ prices.aluminum.today }}<br>
-                上日均价：{{ prices.aluminum.yesterday }}<br>
-                涨跌：{{ prices.aluminum.change }}
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>银价</h2>
-            <div class="price" style="color:{% if prices.silver.trend == 'up' %}red{% elif prices.silver.trend == 'down' %}green{% else %}black{% endif %};">
-                今日均价：{{ prices.silver.today }}<br>
-                上日均价：{{ prices.silver.yesterday }}<br>
-                涨跌：{{ prices.silver.change }}
-            </div>
-        </div>
-
-    </div>
-
     <div class="products">
         <h2>主要产品</h2>
+
         <div class="product-grid">
+
             <div class="product">
-                <img src="{{ url_for('static', filename='product1.png') }}">
+                <img src="{{ url_for('static', filename='product1.png') }}" onclick="openImage(this.src)">
                 <div class="product-title">Tulip Contact</div>
             </div>
 
             <div class="product">
-                <img src="{{ url_for('static', filename='product2.png') }}">
+                <img src="{{ url_for('static', filename='product2.png') }}" onclick="openImage(this.src)">
                 <div class="product-title">Fixed Contact</div>
             </div>
 
             <div class="product">
-                <img src="{{ url_for('static', filename='product3.png') }}">
+                <img src="{{ url_for('static', filename='product3.png') }}" onclick="openImage(this.src)">
                 <div class="product-title">Contact Arm</div>
             </div>
+
             <div class="product">
-                <img src="{{ url_for('static', filename='product4.png') }}">
-                <div class="product-title">Contact Arm</div>
+                <img src="{{ url_for('static', filename='product4.png') }}" onclick="openImage(this.src)">
+                <div class="product-title">Copper Connector</div>
             </div>
+
         </div>
-    </div>
-
-    <div class="news">
-        <h2>今日重要新闻</h2>
-        <ul>
-        {% for event in events %}
-            <li>
-                <a href="{{ event.link }}" target="_blank">{{ event.title }}</a>
-            </li>
-        {% endfor %}
-        </ul>
-    </div>
-
-    <div class="analysis">
-        <h2>AI行情分析（每日19:00更新）</h2>
-        <div class="analysis-content">
-{{ analysis }}
-        </div>
-    </div>
-
-    <div class="chart-box">
-        <h2>价格趋势</h2>
-
-        <div class="buttons">
-            <button onclick="showMetal('all')">全部</button>
-            <button onclick="showMetal('copper')">铜</button>
-            <button onclick="showMetal('aluminum')">铝</button>
-            <button onclick="showMetal('silver')">银</button>
-        </div>
-
-        <canvas id="priceChart" width="800" height="400"></canvas>
     </div>
 
 </div>
 
-<div class="footer">
-    玉环博泰电气有限公司 | Yuhuan Botai Electric Co., Ltd.
+<!-- 🔥 弹窗 -->
+<div id="imageModal" class="image-modal" onclick="closeImage()">
+    <span>&times;</span>
+    <img id="modalImage">
 </div>
 
 <script>
-const ctx = document.getElementById('priceChart').getContext('2d');
-
-const labels = {{ dates | tojson }};
-const copperData = {{ copper_history | tojson }};
-const aluminumData = {{ aluminum_history | tojson }};
-const silverData = labels.map(() => Number(String("{{ prices.silver.today }}").replace(",", "")));
-
-function copperDataset() {
-    return {
-        label: '铜均价',
-        data: copperData,
-        borderWidth: 2,
-        tension: 0.3
-    };
+function openImage(src) {
+    document.getElementById("imageModal").style.display = "flex";
+    document.getElementById("modalImage").src = src;
 }
 
-function aluminumDataset() {
-    return {
-        label: '铝均价',
-        data: aluminumData,
-        borderWidth: 2,
-        tension: 0.3
-    };
-}
-
-function silverDataset() {
-    return {
-        label: '银均价',
-        data: silverData,
-        borderWidth: 2,
-        tension: 0.3
-    };
-}
-
-let chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [
-            copperDataset(),
-            aluminumDataset(),
-            silverDataset()
-        ]
-    },
-    options: {
-        responsive: true
-    }
-});
-
-function showMetal(type) {
-    if (type === 'all') {
-        chart.data.datasets = [
-            copperDataset(),
-            aluminumDataset(),
-            silverDataset()
-        ];
-    }
-
-    if (type === 'copper') {
-        chart.data.datasets = [copperDataset()];
-    }
-
-    if (type === 'aluminum') {
-        chart.data.datasets = [aluminumDataset()];
-    }
-
-    if (type === 'silver') {
-        chart.data.datasets = [silverDataset()];
-    }
-
-    chart.update();
+function closeImage() {
+    document.getElementById("imageModal").style.display = "none";
 }
 </script>
 
